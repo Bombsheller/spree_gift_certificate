@@ -6,16 +6,22 @@ FactoryGirl.define do
     gift_from 'Susan'
     message '<3'
 
-    after(:create) do |certificate|
-      certificate.recipient_user_id = create(:user).id
-    end
+    factory :purchased_certificate do
+      state :purchased
+      payment_id 5
+      sender_email 'example@example.com'
 
-    factory :redeemed_certificate do
-      state :redeemed
-    end
+      factory :redeemed_certificate do
+        state :redeemed
 
-    factory :refunded_certificate do
-      state :refunded
+        after(:create) do |certificate|
+          certificate.recipient_user_id = create(:user).id
+        end
+      end
+
+      factory :refunded_certificate do
+        state :refunded
+      end
     end
   end
 end
