@@ -27,10 +27,23 @@ module Spree
       Spree::User.find(recipient_user_id)
     end
 
-    def redeem_for!(user)
-      self.recipient_user_id = user.id
-      self.save!
-      self.redeem!
+    def redeem_for(user)
+      status = {}
+      if user
+        self.recipient_user_id = user.id
+        begin
+          self.save!
+          self.redeem!
+          status[:notice] = "Successfully redeemed gift certificate for #{Spree::Money.new(amount).to_s}! You now have #{user.store_credits_total} in store credit."
+        rescue StateMachine::InvalidTransition => e
+          status[:error] = "Could not redeem gift certificate because #{nice_failure_reason(e)}."
+        rescue Exception => e
+          status[:error] = "Something went wrong. Please try again."
+        end
+      else
+        status[:error] = "Need to be logged in to redeem a gift certificate."
+      end
+      status
     end
 
     private
@@ -39,7 +52,7 @@ module Spree
           user_id: recipient_user_id,
           amount: amount,
           remaining_amount: amount,
-          reason: "Spree::GiftCertificate")
+          reason: "Spree::GiftCertificate, code: #{self.code}")
       end
 
       def ensure_email_and_payment(transition_args)
@@ -48,6 +61,16 @@ module Spree
         self.sender_email = transition_args[:sender_email]
         self.payment_id = transition_args[:payment_id]
         self.save!
+      end
+
+      def nice_failure_reason(exception)
+        if self.state == 'redeemed'
+          'it has already been redeemed'
+        elsif self.state == 'refunded'
+          'the purchaser got a refend'
+        elsif self.state == 'pending'
+          'the certificate has not yet been paid for'
+        end
       end
   end
 end

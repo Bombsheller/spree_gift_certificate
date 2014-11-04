@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :gift_certificate, class: Spree::GiftCertificate do
-    code 'FieryFuzzyTurtles'
+    sequence(:code) { |n| "Product ##{n} - #{Kernel.rand(9999)}" }
     amount 25
     gift_to 'Charlie'
     gift_from 'Susan'

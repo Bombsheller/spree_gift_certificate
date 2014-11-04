@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_gift_certificate'
-  s.version     = '2.2.1'
+  s.version     = '2.2.2'
   s.summary     = 'Provide gift certificate functionality redeemable as store credit'
   s.description = 'Provide gift certificate functionality redeemable as store credit'
   s.required_ruby_version = '>= 1.9.3'
@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'ffaker'
   s.add_development_dependency 'rspec-rails',  '~> 2.13'
   s.add_development_dependency 'sass-rails', '~> 4.0.2'
-  s.add_development_dependency 'selenium-webdriver'
+  s.add_development_dependency 'capybara-webkit'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'sqlite3'
 end

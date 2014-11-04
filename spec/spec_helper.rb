@@ -10,6 +10,12 @@ SimpleCov.start do
   add_group 'Libraries', 'lib'
 end
 
+# Use Capybara-webkit for screenshot functionality
+require 'capybara/rspec'
+require 'capybara-webkit'
+Capybara.default_driver = :webkit
+Capybara.javascript_driver = :webkit
+
 # Configure Rails Environment
 ENV['RAILS_ENV'] = 'test'
 
@@ -18,6 +24,9 @@ require File.expand_path('../dummy/config/environment.rb',  __FILE__)
 require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
+
+# Some helper methods for feature specs
+require 'features/feature_spec_helper'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.

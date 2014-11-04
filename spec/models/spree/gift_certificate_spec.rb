@@ -9,8 +9,8 @@ describe Spree::GiftCertificate do
 
   context 'redeeming gift certificate' do
     it 'should award store credit when redeemed' do
-      purchased_certificate.redeem_for!(recipient)
-      recipient_total_store_credits = recipient.store_credits.to_a.sum { |c| c.remaining_amount }
+      purchased_certificate.redeem_for(recipient)
+      recipient_total_store_credits = recipient.store_credits_total
       expect(recipient_total_store_credits).to eq(purchased_certificate.amount)
       expect(purchased_certificate.state).to eq("redeemed")
       expect(purchased_certificate.recipient).to eq(recipient)
@@ -18,12 +18,20 @@ describe Spree::GiftCertificate do
 
     context 'with an unredeemable certificate' do
       it 'should not allow redeeming of already redeemed certificate' do
-        expect(redeemed_certificate.redeem).to eq(false)
+        redemption_status = redeemed_certificate.redeem_for(recipient)
+        expect(redemption_status.has_key?(:error)).to eq(true)
       end
 
       it 'should not allow redeeming of a refunded certificate' do
-        expect(refunded_certificate.redeem).to eq(false)
+        redemption_status = redeemed_certificate.redeem_for(recipient)
+        expect(redemption_status.has_key?(:error)).to eq(true)
       end
+    end
+
+    it 'should not allow redeeming without a recipient' do
+      redemption_status = redeemed_certificate.redeem_for(nil)
+      expect(redemption_status.has_key?(:error)).to eq(true)
+      expect(purchased_certificate.state).to eq(:purchased)
     end
   end
 
