@@ -10,6 +10,7 @@ module Spree
         transition from: :pending, to: :purchased
       end
       before_transition to: :purchased do |certificate, transition|
+        certificate.send(:set_expiry)
         certificate.send(:ensure_email_and_payment, transition.args.first)
       end
 
@@ -30,15 +31,19 @@ module Spree
     def redeem_for(user)
       status = {}
       if user
-        self.recipient_user_id = user.id
-        begin
-          self.save!
-          self.redeem!
-          status[:notice] = "Successfully redeemed gift certificate for #{Spree::Money.new(amount).to_s}! You now have #{user.store_credits_total} in store credit."
-        rescue StateMachine::InvalidTransition => e
-          status[:error] = "Could not redeem gift certificate because #{nice_failure_reason(e)}."
-        rescue Exception => e
-          status[:error] = "Something went wrong. Please try again."
+        if self.expiry > Date.today # Certificate has not yet expired
+          self.recipient_user_id = user.id
+          begin
+            self.save!
+            self.redeem!
+            status[:notice] = "Successfully redeemed gift certificate for #{Spree::Money.new(amount).to_s}! You now have #{user.store_credits_total} in store credit."
+          rescue StateMachine::InvalidTransition => e
+            status[:error] = "Could not redeem gift certificate because #{nice_failure_reason(e)}."
+          rescue Exception => e
+            status[:error] = "Something went wrong. Please try again."
+          end
+        else
+          status[:error] = "Gift card has expired."
         end
       else
         status[:error] = "Need to be logged in to redeem a gift certificate."
@@ -58,9 +63,14 @@ module Spree
       def ensure_email_and_payment(transition_args)
         raise 'Need an email address to purchase a gift certificate.' if !transition_args.has_key?(:sender_email)
         raise 'Need payment info.' if !transition_args.has_key?(:payment_id)
+        raise 'Something went wrong. Please try again.' if !self.expiry
         self.sender_email = transition_args[:sender_email]
         self.payment_id = transition_args[:payment_id]
         self.save!
+      end
+
+      def set_expiry
+        self.expiry = Date.today
       end
 
       def nice_failure_reason(exception)

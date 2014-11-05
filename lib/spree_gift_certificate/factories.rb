@@ -10,6 +10,7 @@ FactoryGirl.define do
       state :purchased
       payment_id 5
       sender_email 'example@example.com'
+      expiry 1.year.from_now
 
       factory :redeemed_certificate do
         state :redeemed

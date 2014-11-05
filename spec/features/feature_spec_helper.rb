@@ -7,8 +7,8 @@ end
 
 def fill_in_address
   address = "order_bill_address_attributes"
-  fill_in "#{address}_firstname", with: "Ryan"
-  fill_in "#{address}_lastname", with: "Bigg"
+  fill_in "#{address}_firstname", with: "Lucas"
+  fill_in "#{address}_lastname", with: "Eggers"
   fill_in "#{address}_address1", with: "143 Swan Street"
   fill_in "#{address}_city", with: "Richmond"
   select "United States of America", from: "#{address}_country_id"

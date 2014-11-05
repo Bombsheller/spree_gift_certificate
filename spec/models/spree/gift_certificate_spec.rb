@@ -32,6 +32,13 @@ describe Spree::GiftCertificate do
       expect(redemption_status.has_key?(:error)).to eq(true)
       expect(purchased_certificate.state).to eq(:purchased)
     end
+
+    it 'should not allow redeeming of expired gift certificate' do
+      purchased_certificate.expiry = Date.yesterday
+      purchased_certificate.save!
+      redemption_status = purchased_certificate.redeem_for(recipient)
+      expect(redemption_status.has_key?(:error)).to eq(true)
+    end
   end
 
   context 'refunding gift certificate' do
