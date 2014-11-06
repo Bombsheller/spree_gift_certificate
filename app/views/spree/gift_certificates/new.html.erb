@@ -1,0 +1,42 @@
+<%= form_for @gift_certificate do |f| %>
+    <p>
+        <%= f.label :sender_email, 'Purchaser email address (the gift certificate will be sent here for printing or resending):' %>
+        <br/>
+        <%= f.text_field :sender_email, placeholder: 'example@example.com' %>
+    </p>
+    <p>
+        <%= f.label :gift_to, "To:" %>
+        <br/>
+        <%= f.text_field :gift_to, placeholder: 'Andy' %>
+    </p>
+    <p>
+        <%= f.label :gift_from, "From:" %>
+        <br/>
+        <%= f.text_field :gift_from, placeholder: 'Chris' %>
+    </p>
+    <p>
+        <%= f.label :message %>
+        <br/>
+        <%= f.text_field :message, placeholder: 'Happy holidays!' %>
+    </p>
+    <% if @preferred_gift_certificate_values %>
+        <p>
+            <%= f.label :amount, "Gift Certificate Value:" %>
+            <br/>
+            <%= f.select :amount, @preferred_gift_certificate_values, id: 'gift_certificate_amount_select' %>
+            <br/>
+            <br/>
+            <button type='button' id='show_gift_certificate_value_input'>Custom value</button>
+            <br/>
+            <br/>
+            <%= f.number_field :amount, style: 'display:none;', placeholder: 30 %>
+        </p>
+    <% else %>
+        <p>
+            <%= f.label :amount, "Gift Certificate Value:" %>
+            <br/>
+            <%= f.number_field :amount, placeholder: 30 %>
+        </p>
+    <% end %>
+    <%= f.submit %>
+<% end %>
