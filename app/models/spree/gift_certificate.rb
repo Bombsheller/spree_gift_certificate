@@ -1,6 +1,11 @@
 module Spree
   class GiftCertificate < ActiveRecord::Base
-    validates :amount, :code, :gift_to, presence: true
+    @@code_generator = GiftCodeGenerator.new
+    before_validation do
+      self.code = generate_code if self.code.nil?
+    end
+
+    validates :amount, :code, presence: true
     validates :amount, numericality: true
     validates :code, uniqueness: true
 
@@ -52,6 +57,14 @@ module Spree
     end
 
     private
+      def generate_code
+        code = @@code_generator.generate
+        while (GiftCertificate.find_by_code(code))
+          code = @@code_generator.generate
+        end
+        code
+      end
+
       def award_store_credit
         Spree::StoreCredit.create!(
           user_id: recipient_user_id,

@@ -1,0 +1,37 @@
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
+<script>
+  (function ($) {
+    $(window).ready(function () {
+      var giftCertificate;
+
+      var handler = StripeCheckout.configure({
+        key: "<%= @stripe_publishable_key %>",
+        image: '/square-image.png',
+        token: function(token) {
+          console.log('buy gift certificate');
+          // Use the token to create the charge with a server-side script.
+          // You can access the token ID with `token.id`
+        }
+      });
+
+      // Form is submitted via AJAX. If successful, just bring up the payment form.
+      // If unsuccessful, the server will redirect
+      var form = $('form#new_gift_certificate');
+      form.on('ajax:success', function (event, data, status, xhr) {
+        giftCertificate = data;
+        var amount = giftCertificate.amount;
+
+        handler.open({
+          name: 'Spree Demo',
+          email: $('#gift_certificate_sender_email').val(),
+          description: 'Gift Certificate purchase',
+          amount: Number(amount) * 100 // cents
+        });
+      }).on('ajax:error', function (event, data, status, xhr) {
+        var errorString = data.responseJSON.join('<br/>');
+        show_flash('error', errorString);
+      });
+    });
+  })(jQuery);
+</script>

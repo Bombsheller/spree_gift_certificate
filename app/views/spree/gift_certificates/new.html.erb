@@ -1,8 +1,8 @@
-<%= form_for @gift_certificate do |f| %>
+<%= form_for @gift_certificate, remote: true do |f| %>
     <p>
         <%= f.label :sender_email, 'Purchaser email address (the gift certificate will be sent here for printing or resending):' %>
         <br/>
-        <%= f.text_field :sender_email, placeholder: 'example@example.com' %>
+        <%= f.text_field :sender_email, placeholder: 'example@example.com', value: @current_user_email %>
     </p>
     <p>
         <%= f.label :gift_to, "To:" %>
@@ -38,5 +38,7 @@
             <%= f.number_field :amount, placeholder: 30 %>
         </p>
     <% end %>
-    <%= f.submit %>
+    <%= f.submit 'Buy Gift Certificate', id: 'buy_certificate' %>
 <% end %>
+
+<%= render partial: 'stripe_payment' if @stripe_publishable_key %>
