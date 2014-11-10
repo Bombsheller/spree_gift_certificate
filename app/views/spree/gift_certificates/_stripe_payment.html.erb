@@ -7,11 +7,20 @@
 
       var handler = StripeCheckout.configure({
         key: "<%= @stripe_publishable_key %>",
-        image: '/square-image.png',
+        image: '/assets/noimage/small.png',
         token: function(token) {
-          console.log('buy gift certificate');
-          // Use the token to create the charge with a server-side script.
-          // You can access the token ID with `token.id`
+          var payload = {
+            id: giftCertificate.id,
+            stripeToken: token
+          };
+          $.post("/buy_gift_certificate", payload, function (data, status, xhr) {
+            // If error is returned and it is a stripe error, pop the stripe box back up
+            console.log('success!');
+            console.log(data);
+          }).fail(function (data, status, xhr) {
+            console.log("FAIL");
+            console.log(data);
+          });
         }
       });
 
@@ -23,7 +32,7 @@
         var amount = giftCertificate.amount;
 
         handler.open({
-          name: 'Spree Demo',
+          name: "<%= Spree::Config.site_name %>",
           email: $('#gift_certificate_sender_email').val(),
           description: 'Gift Certificate purchase',
           amount: Number(amount) * 100 // cents
