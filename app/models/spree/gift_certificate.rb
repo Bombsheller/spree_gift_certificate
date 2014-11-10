@@ -6,7 +6,7 @@ module Spree
     end
 
     validates :amount, :code, :sender_email, presence: true
-    validates :amount, numericality: true, greater_than: 0
+    validates :amount, numericality: { greater_than: 0 }
     validates :code, uniqueness: true
 
     state_machine :state, initial: :pending do
@@ -96,7 +96,7 @@ module Spree
           p charge
           p charge.params
           p charge.params['id']
-          self.payment_id = charge.params['id']
+          self.payment_code = charge.params['id']
           self.save
         rescue ::Stripe::CardError
           # Charge messed up
