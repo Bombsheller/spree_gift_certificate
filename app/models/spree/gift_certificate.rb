@@ -105,7 +105,7 @@ module Spree
       end
 
       def set_expiry
-        self.expiry = Date.today
+        self.expiry = 1.year.from_now
       end
 
       def nice_failure_reason

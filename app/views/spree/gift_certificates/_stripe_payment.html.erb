@@ -3,7 +3,22 @@
 <script>
   (function ($) {
     $(window).ready(function () {
-      var giftCertificate;
+      var giftCertificate,
+          form = $('form#new_gift_certificate');
+
+      var showFlash = function(type, message) {
+        var flash_div = $('.flash.' + type);
+        if (flash_div.length == 0) {
+          flash_div = $('<div class="flash ' + type + '" />');
+          $('#wrapper').prepend(flash_div);
+        }
+        flash_div.html(message).show().delay(5000).fadeOut(500);
+      }
+
+      var showFlashForArray = function (type, arrayOfMessages) {
+        var messageHtmlString = arrayOfMessages.join('<br/>');
+        showFlash(type, messageHtmlString);
+      }
 
       var handler = StripeCheckout.configure({
         key: "<%= @stripe_publishable_key %>",
@@ -13,22 +28,23 @@
             id: giftCertificate.id,
             stripeToken: token
           };
+
+          // If we successfully charge the user's credit card, redirect them
+          // to the page describing the gift certificate. Otherwise, give them
+          // an error and tell them to try again.
           $.post("/buy_gift_certificate", payload, function (data, status, xhr) {
-            // If error is returned and it is a stripe error, pop the stripe box back up
-            console.log('success!');
-            console.log(data);
+            window.location.replace('/gift_certificates/' + data.id);
           }).fail(function (data, status, xhr) {
-            console.log("FAIL");
-            console.log(data);
+            var errorArray = data.responseJSON;
+            if (errorArray.length === 0) {
+              errorArray = ['Something went wrong processing your payment. Please try again.'];
+            }
+            showFlashForArray('error', errorArray);
           });
         }
       });
 
-      // Form is submitted via AJAX. If successful, just bring up the payment form.
-      // If unsuccessful, the server will redirect
-      var form = $('form#new_gift_certificate');
-      form.on('ajax:success', function (event, data, status, xhr) {
-        giftCertificate = data;
+      var openStripeBoxForGiftCertificate = function (giftCertificate) {
         var amount = giftCertificate.amount;
 
         handler.open({
@@ -37,9 +53,24 @@
           description: 'Gift Certificate purchase',
           amount: Number(amount) * 100 // cents
         });
+      }
+
+      // Form is submitted via AJAX. If successful, just bring up the payment form.
+      // If unsuccessful, the server will redirect
+      form.on('ajax:success', function (event, data, status, xhr) {
+        giftCertificate = data;
+        openStripeBoxForGiftCertificate(giftCertificate);
+
+        // This way we prevent folks from creating new, never-to-be-used
+        // certificates when they submit bad credit card data. It short-circuits
+        // the gift certificate form POST and only asks for payment details,
+        // maintaining the first gift certificate returned.
+        form.click(function (e) {
+          openStripeBoxForGiftCertificate(giftCertificate);
+          e.preventDefault();
+        });
       }).on('ajax:error', function (event, data, status, xhr) {
-        var errorString = data.responseJSON.join('<br/>');
-        show_flash('error', errorString);
+        showFlashForArray('error', data.responseJSON);
       });
     });
   })(jQuery);

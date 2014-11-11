@@ -1,6 +1,10 @@
 module Spree
   # Manages Gift Certificate operations
   class GiftCertificatesController < Spree::StoreController
+    def show
+      @gift_certificate = GiftCertificate.find(params[:id])
+    end
+
     def new
       @gift_certificate = GiftCertificate.new
       if preferred_values?
@@ -30,9 +34,11 @@ module Spree
         if @gift_certificate.errors.empty?
           # Successfully purchased
           format.json { render json: @gift_certificate, status: :created }
+          format.js { render json: @gift_certificate, status: :created }
         else
           # Card absent/charge went awry
           format.json { render json: @gift_certificate.errors.full_messages, status: :unprocessable_entity }
+          format.js { render json: @gift_certificate.errors.full_messages, status: :unprocessable_entity }
         end
       end
     end

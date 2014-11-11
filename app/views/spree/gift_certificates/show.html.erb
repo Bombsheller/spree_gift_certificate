@@ -1,0 +1,25 @@
+<h1>Your Gift Certificate</h1>
+
+<p>
+  <%= "Gift from: #{@gift_certificate.gift_from}" %>
+</p>
+
+<p>
+  <%= "Gift to: #{@gift_certificate.gift_to}" %>
+</p>
+
+<p>
+  <%= "Message: #{@gift_certificate.message}" %>
+</p>
+
+<p>
+  Code: hidden for security reasons! It's in the email we sent to the address below.
+</p>
+
+<p>
+  Amount: also hidden for security reasons! It's in the email we sent to the address below.
+</p>
+
+<p>
+  <%= "Purchaser email address: #{@gift_certificate.sender_email}" %>
+</p>
