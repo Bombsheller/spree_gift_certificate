@@ -17,7 +17,7 @@ module Spree
       before_transition to: :purchased do |certificate, transition|
         certificate.send(:make_charge, transition.args.first)
         certificate.send(:set_expiry)
-        fail 'Gift certificate cannot be purhcased.' unless certificate.errors.empty?
+        fail 'Gift certificate cannot be purchased.' unless certificate.errors.empty?
       end
 
       event :redeem do

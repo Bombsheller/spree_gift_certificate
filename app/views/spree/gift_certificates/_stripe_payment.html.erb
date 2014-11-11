@@ -12,7 +12,8 @@
           flash_div = $('<div class="flash ' + type + '" />');
           $('#wrapper').prepend(flash_div);
         }
-        flash_div.html(message).show().delay(5000).fadeOut(500);
+        console.log('Show flash notice with message: '  + message);
+        flash_div.html(message).show();
       }
 
       var showFlashForArray = function (type, arrayOfMessages) {
@@ -33,8 +34,10 @@
           // to the page describing the gift certificate. Otherwise, give them
           // an error and tell them to try again.
           $.post("/buy_gift_certificate", payload, function (data, status, xhr) {
+            console.log('Payment successfully processed.');
             window.location.replace('/gift_certificates/' + data.id);
           }).fail(function (data, status, xhr) {
+            console.log('Something went wrong with payment.');
             var errorArray = data.responseJSON;
             if (errorArray.length === 0) {
               errorArray = ['Something went wrong processing your payment. Please try again.'];
@@ -55,9 +58,10 @@
         });
       }
 
-      // Form is submitted via AJAX. If successful, just bring up the payment form.
-      // If unsuccessful, the server will redirect
+      // Form is submitted via AJAX. If successful, bring up the payment form.
+      // If unsuccessful, show some helpful errors.
       form.on('ajax:success', function (event, data, status, xhr) {
+        console.log('Gift certificate created.');
         giftCertificate = data;
         openStripeBoxForGiftCertificate(giftCertificate);
 
@@ -70,6 +74,7 @@
           e.preventDefault();
         });
       }).on('ajax:error', function (event, data, status, xhr) {
+        console.log('Gift certificate creation errored out.');
         showFlashForArray('error', data.responseJSON);
       });
     });

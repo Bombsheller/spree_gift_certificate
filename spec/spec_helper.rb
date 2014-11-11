@@ -15,6 +15,7 @@ require 'capybara/rspec'
 require 'capybara-webkit'
 Capybara.default_driver = :webkit
 Capybara.javascript_driver = :webkit
+Capybara.default_wait_time = 5
 
 # Configure Rails Environment
 ENV['RAILS_ENV'] = 'test'
