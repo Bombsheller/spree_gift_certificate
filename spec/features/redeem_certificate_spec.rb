@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe 'Redeeming a gift certificate', :js => true do
+describe 'Redeeming a gift certificate', js: true do
   let(:purchased_certificate)  { create(:purchased_certificate) }
   let(:user) { create(:user) }
 
-  let!(:country) { create(:country, :states_required => true) }
-  let!(:state) { create(:state, :country => country) }
+  let!(:country) { create(:country, states_required: true) }
+  let!(:state) { create(:state, country: country) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
   let!(:payment_method) { create(:credit_card_payment_method) }
@@ -59,8 +59,8 @@ describe 'Redeeming a gift certificate', :js => true do
     it 'should allow redemption on payment screen and then use store credits to pay' do
       click_on 'Checkout'
       fill_in_address
-      click_button "Save and Continue"
-      click_button "Save and Continue"
+      click_button 'Save and Continue'
+      click_button 'Save and Continue'
       fill_in 'order_coupon_code', with: purchased_certificate.code
       click_on 'Save and Continue'
       expect(page).to have_content('Successfully redeemed gift certificate')
