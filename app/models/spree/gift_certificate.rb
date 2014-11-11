@@ -58,7 +58,7 @@ module Spree
     end
 
     def stripe_publishable_key
-      @stripe_publishable_key ||= stripe_payment_methods.first.preferred_publishable_key
+      @stripe_publishable_key ||= stripe_payment_methods.first.preferred_publishable_key if stripe_payment_methods.length > 0
     end
 
     private
@@ -68,7 +68,7 @@ module Spree
       end
 
       def stripe_secret_key
-        stripe_payment_methods.first.preferred_secret_key
+        stripe_payment_methods.first.preferred_secret_key if stripe_payment_methods.length > 0
       end
 
       def generate_code
@@ -90,15 +90,11 @@ module Spree
       def make_charge(stripe_token)
         return errors.add(:payment, 'No payment info supplied.') unless stripe_token
         begin
-          p stripe_token
           stripe_gateway = ActiveMerchant::Billing::StripeGateway.new(login: stripe_secret_key)
           charge = stripe_gateway.purchase(amount.to_i * 100, stripe_token['id'])
-          p charge
-          p charge.params
-          p charge.params['id']
           self.payment_code = charge.params['id']
           self.save
-        rescue ::Stripe::CardError
+        rescue Exception
           # Charge messed up
           errors.add(:payment, 'Something went wrong with your card. Please try again.')
         end

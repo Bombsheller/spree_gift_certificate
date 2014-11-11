@@ -5,11 +5,11 @@ FactoryGirl.define do
     gift_to 'Charlie'
     gift_from 'Susan'
     message '<3'
+    sender_email 'example@example.com'
 
     factory :purchased_certificate do
       state :purchased
-      payment_id 5
-      sender_email 'example@example.com'
+      payment_code 'this_is_a_code'
       expiry 1.year.from_now
 
       factory :redeemed_certificate do
