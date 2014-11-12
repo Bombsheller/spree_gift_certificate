@@ -28,19 +28,21 @@ module Spree
 
     def update
       @gift_certificate = GiftCertificate.find(params[:id])
-      @gift_certificate.purchase(params[:stripeToken]) rescue
+      @gift_certificate.purchase(params[:stripeToken])
 
       respond_to do |format|
-        if @gift_certificate.errors.empty?
-          # Successfully purchased
-          format.json { render json: @gift_certificate, status: :created }
-          format.js { render json: @gift_certificate, status: :created }
-        else
-          # Card absent/charge went awry
+        # Successfully purchased
+        format.json { render json: @gift_certificate, status: :created }
+        format.js { render json: @gift_certificate, status: :created }
+        format.html { render :show }
+      end
+
+      rescue # Card absent/charge went awry
+        respond_to do |format|
           format.json { render json: @gift_certificate.errors.full_messages, status: :unprocessable_entity }
           format.js { render json: @gift_certificate.errors.full_messages, status: :unprocessable_entity }
+          format.html { render :new }
         end
-      end
     end
 
     private

@@ -29,7 +29,7 @@
             <button type='button' id='show_gift_certificate_value_input'>Custom value</button>
             <br/>
             <br/>
-            <%= f.number_field :amount, style: 'display:none;', placeholder: 30 %>
+            <%= f.number_field :amount, style: 'display:none;', placeholder: @preferred_gift_certificate_values.first %>
         </p>
     <% else %>
         <p>

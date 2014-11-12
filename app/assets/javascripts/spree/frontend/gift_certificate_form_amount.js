@@ -10,7 +10,7 @@
         if (amountSelector.length > 0) {
             setAmountInput( amountSelector.val() );
 
-            amountSelector.click(function () {
+            amountSelector.change(function () {
                 setAmountInput( amountSelector.val() );
             });
         }
