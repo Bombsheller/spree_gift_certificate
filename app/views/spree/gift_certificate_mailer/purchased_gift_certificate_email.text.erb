@@ -1,0 +1,20 @@
+Your Gift Certificate to <%= Spree::Config.site_name %>!
+
+You're going to make somebody very happy with this gift certificate!
+Relevant information is below. We recommend delivering it either by hand
+(by printing this email) or by forwarding this email to the recipient.
+
+GIFT CERTIFICATE DETAILS
+------------------------
+<%= "Gift from: #{@gift_certificate.gift_from}" if @gift_certificate.gift_from %>
+<%= "Gift to: #{@gift_certificate.gift_to}" if @gift_certificate.gift_to %>
+<%= "Message: #{@gift_certificate.message}" if @gift_certificate.message %>
+<%= "Redemption code: #{@gift_certificate.code}" %>
+<%= "Amount: #{@gift_certificate.amount}" %>
+<%= "Purchaser email address: #{@gift_certificate.sender_email}" %>
+<%= "Link to certificate info: #{@gift_certificate_url}" %>
+
+Thanks for purchasing the gift certificate, the recipient will not be disappointed!
+
+Best,
+<%= "The #{Spree::Config.site_name} team" %>

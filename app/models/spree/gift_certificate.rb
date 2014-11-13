@@ -19,6 +19,9 @@ module Spree
         certificate.send(:set_expiry)
         fail 'Gift certificate cannot be purchased.' unless certificate.errors.empty?
       end
+      before_transition to: :purchased do |certificate, _|
+        certificate.send_purchase_email
+      end
 
       event :redeem do
         transition from: :purchased, to: :redeemed
@@ -59,6 +62,10 @@ module Spree
 
     def stripe_publishable_key
       @stripe_publishable_key ||= stripe_payment_methods.first.preferred_publishable_key if stripe_payment_methods.length > 0
+    end
+
+    def send_purchase_email
+      GiftCertificateMailer.purchased_gift_certificate_email(self).deliver
     end
 
     private

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Your Gift Certificate to <%= Spree::Config.site_name %>!</h1>
+    <p>
+      You're going to make somebody very happy with this gift certificate!
+      Relevant information is below. We recommend delivering it either by hand
+      (by printing this email) or by forwarding this email to the recipient.<br>
+    </p>
+    <p>
+      <h2>Gift Certificate Details</h2>
+      <p>
+        <%= "Gift from: #{@gift_certificate.gift_from}" if @gift_certificate.gift_from %>
+      </p>
+      <p>
+        <%= "Gift to: #{@gift_certificate.gift_to}" if @gift_certificate.gift_to %>
+      </p>
+      <p>
+        <%= "Message: #{@gift_certificate.message}" if @gift_certificate.message %>
+      </p>
+      <p>
+        <%= "Redemption code: #{@gift_certificate.code}" %>
+      </p>
+      <p>
+        <%= "Amount: #{@gift_certificate.amount}" %>
+      </p>
+      <p>
+        <%= "Purchaser email address: #{@gift_certificate.sender_email}" %>
+      </p>
+      <p>
+        <%= "Link to certificate info: #{@gift_certificate_url}" %>
+      </p>
+    </p>
+    <p>Thanks for purchasing the gift certificate, the recipient will not be disappointed!</p>
+    <br>
+    Best,<br>
+    <%= "The #{Spree::Config.site_name} team" %>
+  </body>
+</html>

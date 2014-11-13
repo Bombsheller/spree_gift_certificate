@@ -15,6 +15,9 @@ describe 'Purchasing a gift certificate', js: true do
 
     payment_response = OpenStruct.new(params: { 'id' => 'this_is_an_id' })
     ActiveMerchant::Billing::StripeGateway.any_instance.stub(purchase: payment_response)
+
+    # So emails will be stored in the deliveries array
+    ActionMailer::Base.delivery_method = :test
   end
 
   context 'as a guest' do
@@ -28,11 +31,17 @@ describe 'Purchasing a gift certificate', js: true do
       expect(find('#wrapper').find('.flash')).to have_content('Amount can\'t be blank')
     end
 
-    it 'should allow purchase' do
-      sender_email = 'spree@example.com'
-      fill_in 'gift_certificate_sender_email', with: sender_email
+    it 'should allow purchase and retain all info inputted into form' do
+      sender_email = 'never@gonna.work'
       amount = 5
+      gift_from = 'mom'
+      gift_to = 'son'
+      message = 'hope you like your leggings!'
+      fill_in 'gift_certificate_sender_email', with: sender_email
       fill_in 'gift_certificate_amount', with: amount
+      fill_in 'gift_certificate_gift_from', with: gift_from
+      fill_in 'gift_certificate_gift_to', with: gift_to
+      fill_in 'gift_certificate_message', with: message
       click_on 'Buy Gift Certificate'
       wait_for_ajax
       expect(find('#wrapper')).to_not have_content('Sender email can\'t be blank')
@@ -44,6 +53,9 @@ describe 'Purchasing a gift certificate', js: true do
       expect(certificate.sender_email).to eq(sender_email)
       expect(certificate.code.nil?).to eq(false)
       expect(certificate.amount).to eq(amount)
+      expect(certificate.gift_from).to eq(gift_from)
+      expect(certificate.gift_to).to eq(gift_to)
+      expect(certificate.message).to eq(message)
 
       page.evaluate_script("jQuery.post('/buy_gift_certificate', {id: #{certificate_id},
                                                                   stripeToken: {id: 'also_bogus'}},
@@ -53,6 +65,21 @@ describe 'Purchasing a gift certificate', js: true do
       certificate.reload
       expect(certificate.state).to eq('purchased')
       expect(certificate.expiry).to eq(1.year.from_now.to_date)
+
+      deliveries = ActionMailer::Base.deliveries
+      expect(deliveries.count).to eq(1)
+
+      email = deliveries.first
+      bodies = [email.text_part.body.decoded, email.html_part.body.decoded]
+
+      expect(email.to.first).to eq(sender_email)
+      bodies.each do |body|
+        expect(body).to have_content(amount)
+        expect(body).to have_content(gift_from)
+        expect(body).to have_content(gift_to)
+        expect(body).to have_content(message)
+        expect(body).to have_content(certificate.code)
+      end
     end
   end
 
@@ -66,24 +93,16 @@ describe 'Purchasing a gift certificate', js: true do
       expect(find('#gift_certificate_sender_email').value).to eq(user.email)
     end
 
-    it 'should allow filling of all form elements' do
+    it 'should allow filling of only necessary elements' do
       amount = 5
-      gift_from = 'mom'
-      gift_to = 'son'
-      message = 'hope you like your leggings!'
       fill_in 'gift_certificate_amount', with: amount
-      fill_in 'gift_certificate_gift_from', with: gift_from
-      fill_in 'gift_certificate_gift_to', with: gift_to
-      fill_in 'gift_certificate_message', with: message
       click_on 'Buy Gift Certificate'
       wait_for_ajax
 
       certificate = Spree::GiftCertificate.find_by_sender_email(user.email)
+      expect(certificate.state).to eq('pending')
       expect(certificate.amount).to eq(amount)
       expect(certificate.sender_email).to eq(user.email)
-      expect(certificate.gift_from).to eq(gift_from)
-      expect(certificate.gift_to).to eq(gift_to)
-      expect(certificate.message).to eq(message)
     end
   end
 
