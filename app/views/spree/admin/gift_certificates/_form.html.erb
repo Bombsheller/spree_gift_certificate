@@ -1,0 +1,69 @@
+<div data-hook="admin_property_form" class="align-center row">
+  <div class="left alpha eight columns">
+    <div>
+      <%= f.field_container :amount do %>
+        <%= f.label :amount, 'Amount' %>
+        <%= f.number_field :amount, :value => number_to_currency(@gift_certificate.amount), :class => 'fullwidth' %>
+        <%= f.error_message_on :amount %>
+      <% end %>
+    </div>
+    <div>
+      <%= f.field_container :code do %>
+        <%= f.label :code, 'Code' %> <span class="required">*</span><br />
+        <%= f.text_field :code, :class => 'fullwidth' %>
+        <%= f.error_message_on :code %>
+      <% end %>
+    </div>
+    <div>
+      <%= f.field_container :sender_email do %>
+        <%= f.label :sender_email, 'Sender Email' %> <span class="required">*</span><br />
+        <%= f.text_field :sender_email, :class => 'fullwidth' %>
+        <%= f.error_message_on :sender_email %>
+      <% end %>
+    </div>
+    <div>
+      <%= f.field_container :expiry do %>
+        <%= f.label :expiry, 'Expiry' %>
+        <div class='fullwidth'><%= @gift_certificate.expiry %></div>
+        <%= f.error_message_on :expiry %>
+      <% end %>
+    </div>
+  </div>
+  <div class="right eight columns omega">
+    <div>
+      <%= f.field_container :state do %>
+        <%= f.label :state, 'State' %>
+        <div class='fullwidth'><%= @gift_certificate.state %></div>
+        <%= f.error_message_on :state %>
+      <% end %>
+    </div>
+    <div>
+      <%= f.field_container :payment_code do %>
+        <%= f.label :payment_code, 'Payment Code' %>
+        <div class='fullwidth'><%= @gift_certificate.payment_code || 'Not bought yet' %></div>
+        <%= f.error_message_on :payment_code %>
+      <% end %>
+    </div>
+    <div>
+      <%= f.field_container :gift_from do %>
+        <%= f.label :gift_from, 'Gift From' %>
+        <%= f.text_field :gift_from, :class => 'fullwidth' %>
+        <%= f.error_message_on :gift_from %>
+      <% end %>
+    </div>
+    <div>
+      <%= f.field_container :gift_to do %>
+        <%= f.label :gift_to, 'Gift To' %>
+        <%= f.text_field :gift_to, :class => 'fullwidth' %>
+        <%= f.error_message_on :gift_to %>
+      <% end %>
+    </div>
+    <div>
+      <%= f.field_container :message do %>
+        <%= f.label :message, 'Message' %>
+        <%= f.text_field :message, :class => 'fullwidth' %>
+        <%= f.error_message_on :message %>
+      <% end %>
+    </div>
+  </div>
+</div>

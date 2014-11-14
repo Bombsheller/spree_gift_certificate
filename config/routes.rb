@@ -4,4 +4,8 @@ Spree::Core::Engine.routes.draw do
   post 'gift_certificates', to: 'gift_certificates#create'
   post 'buy_gift_certificate', to: 'gift_certificates#update'
   get 'gift_certificates/:id', to: 'gift_certificates#show'
+
+  namespace :admin do
+    resources :gift_certificates
+  end
 end

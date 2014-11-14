@@ -1,0 +1,87 @@
+<!-- Inspired by <spree gem>/backend/app/views/spree/admin/properties/index.html -->
+
+<% content_for :page_title do %>
+  Gift Certificates
+<% end %>
+
+<%= render 'spree/admin/shared/product_sub_menu' %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_gift_certificate_sidebar">
+
+    <%= search_form_for [:admin, @search] do |f| %>
+
+        <%- locals = {:f => f} %>
+
+        <div data-hook="admin_gift_certificate_index_search">
+          <div class="left alpha eight columns">
+            <div class="field">
+              <%= f.label :code_cont, Spree.t(:code) %>
+              <%= f.text_field :code_cont %>
+            </div>
+          </div>
+          <div class="right omega eight columns">
+            <div class="field">
+              <%= f.label :sender_email_cont, Spree.t(:sender_email) %>
+              <%= f.text_field :sender_email_cont %>
+            </div>
+          </div>
+        </div>
+
+        <div class="clear"></div>
+
+        <div class="form-buttons actions filter-actions" data-hook="admin_properties_index_search_buttons">
+          <%= button Spree.t(:search), 'search' %>
+        </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @collection.any? %>
+<table class="index" id='listing_gift_certificates' data-hook>
+  <colgroup>
+    <col style="width: 15%">
+    <col style="width: 5%">
+    <col style="width: 10%">
+    <col style="width: 10%">
+    <col style="width: 20%">
+    <col style="width: 10%">
+    <col style="width: 20%">
+    <col style="width: 10%">
+  </colgroup>
+  <thead>
+    <tr data-hook="listing_properties_header">
+      <th>Code</th>
+      <th>Amount</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Message</th>
+      <th>Expiry</th>
+      <th>Email</th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @collection.each do |gift_certificate| %>
+      <tr id="<%= spree_dom_id gift_certificate %>" data-hook="gift_certificate_row" class="<%= cycle('odd', 'even')%>">
+        <td style="padding-left:1em"><%= gift_certificate.code %></td>
+        <td style="padding-left:1em"><%= gift_certificate.amount %></td>
+        <td style="padding-left:1em"><%= gift_certificate.gift_from %></td>
+        <td style="padding-left:1em"><%= gift_certificate.gift_to %></td>
+        <td style="padding-left:1em"><%= gift_certificate.message %></td>
+        <td style="padding-left:1em"><%= gift_certificate.expiry %></td>
+        <td style="padding-left:1em"><%= gift_certificate.sender_email %></td>
+        <td class="actions">
+          <%= link_to_edit(gift_certificate, :no_text => true) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    No gift certificates found matching search terms.
+  </div>
+<% end %>
+
+<%= paginate @collection %>

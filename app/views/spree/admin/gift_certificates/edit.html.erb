@@ -1,0 +1,18 @@
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+
+<% content_for :page_title do %>
+  Editing Gift Certificate
+<% end %>
+
+<% content_for :page_actions do %>
+  <li><%= button_link_to "Back to Gift Certificates List", admin_gift_certificates_url, :icon => 'arrow-left'%></li>
+<% end %>
+
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @gift_certificate } %>
+
+<%= form_for [:admin, @gift_certificate] do |f| %>
+  <fieldset class="no-border-top">
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
+<% end %>
