@@ -19,9 +19,7 @@ module Spree
         certificate.send(:set_expiry)
         fail 'Gift certificate cannot be purchased.' unless certificate.errors.empty?
       end
-      before_transition to: :purchased do |certificate, _|
-        certificate.send_purchase_email
-      end
+      before_transition to: :purchased, do: :send_purchase_email
 
       event :redeem do
         transition from: :purchased, to: :redeemed
@@ -31,6 +29,8 @@ module Spree
       event :refund do
         transition from: :purchased, to: :refunded
       end
+      before_transition to: :refunded, do: :refund_purchase
+
     end
 
     def recipient
@@ -61,7 +61,7 @@ module Spree
     end
 
     def stripe_publishable_key
-      @stripe_publishable_key ||= stripe_payment_methods.first.preferred_publishable_key if stripe_payment_methods.length > 0
+      @stripe_publishable_key ||= stripe_payment_method.preferred_publishable_key if stripe_payment_method
     end
 
     def send_purchase_email
@@ -70,12 +70,12 @@ module Spree
 
     private
 
-      def stripe_payment_methods
-        PaymentMethod.where(environment: Rails.env, active: true).select { |m| m.type.match(/stripe/i) }
+      def stripe_payment_method
+        PaymentMethod.where(environment: Rails.env, active: true).select { |m| m.type.match(/stripe/i) }.first
       end
 
       def stripe_secret_key
-        stripe_payment_methods.first.preferred_secret_key if stripe_payment_methods.length > 0
+        stripe_payment_method.preferred_secret_key if stripe_payment_method
       end
 
       def generate_code
@@ -94,10 +94,18 @@ module Spree
           reason: "Spree::GiftCertificate, code: #{code}")
       end
 
+      def refund_purchase
+        return errors.add(:payment, 'Hasn\'t been purhcased yet.') unless payment_code
+        begin
+          stripe_gateway.refund(amount, payment_code)
+        rescue Exception
+          errors.add(:payment, 'Something went wrong refunding. Please use try again or contact sysadmin and use the Stripe dashboard to refund.')
+        end
+      end
+
       def make_charge(stripe_token)
         return errors.add(:payment, 'No payment info supplied.') unless stripe_token
         begin
-          stripe_gateway = ActiveMerchant::Billing::StripeGateway.new(login: stripe_secret_key)
           charge = stripe_gateway.purchase(amount.to_i * 100, stripe_token['id'])
           self.payment_code = charge.params['id']
           self.save
@@ -105,6 +113,10 @@ module Spree
           # Charge messed up
           errors.add(:payment, 'Something went wrong with your card. Please try again.')
         end
+      end
+
+      def stripe_gateway
+        @stripe_gateway ||= ActiveMerchant::Billing::StripeGateway.new(login: stripe_secret_key)
       end
 
       def set_expiry

@@ -6,6 +6,11 @@ Spree::Core::Engine.routes.draw do
   get 'gift_certificates/:id', to: 'gift_certificates#show'
 
   namespace :admin do
-    resources :gift_certificates
+    resources :gift_certificates do
+      member do
+        get :resend, to: 'gift_certificates#resend'
+        get :refund, to: 'gift_certificates#refund'
+      end
+    end
   end
 end
