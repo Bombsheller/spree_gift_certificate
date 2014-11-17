@@ -18,6 +18,7 @@ describe 'Purchasing a gift certificate', js: true do
 
     # So emails will be stored in the deliveries array
     ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.deliveries = []
   end
 
   context 'as a guest' do
