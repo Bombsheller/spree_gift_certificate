@@ -1,7 +1,17 @@
 SpreeGiftCertificate
 ====================
 
-Introduction goes here.
+This gem allows purchasing of gift certificates for Spree ecommerce stores.
+The gift certificates are redeemed as store credit, so there is a dependency on
+the `spree_store_credit` gem.
+The payment method for gift certificates differs from other gift card gems (like
+spree_gift_card or spree_vouchers) in that it has its own checkout flow because
+it seemed incredibly unnecessary to me to try to shoehorn a gift certificate into
+a `Spree::Product` when it's not really a product, but a transfer of value, and
+thus isn't subject to things like shipping, addresses, etc.
+That is, it being *entirely* virtual, it didn't make sense to deal with all of the
+overhead that comes with dealing with physical products.
+As such, it only integrates with Stripe checkout right now.
 
 Installation
 ------------
@@ -36,4 +46,4 @@ Simply add this require statement to your spec_helper:
 require 'spree_gift_certificate/factories'
 ```
 
-Copyright (c) 2014 [name of extension creator], released under the New BSD License
+Copyright (c) 2014 Lucas Eggers, released under the New BSD License
