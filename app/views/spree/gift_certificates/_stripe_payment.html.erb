@@ -23,7 +23,7 @@
 
       var handler = StripeCheckout.configure({
         key: "<%= @stripe_publishable_key %>",
-        image: '<%= asset_path "noimage/small.png" %>',
+        image: '<%= asset_path Spree::Config[:logo] %>',
         token: function(token) {
           var payload = {
             id: giftCertificate.id,
