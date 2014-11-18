@@ -79,10 +79,19 @@ module Spree
       end
 
       def generate_code
+        tries = 0
+        max_tries = 10
         code = @@code_generator.generate
-        while GiftCertificate.find_by_code(code)
+        while GiftCertificate.find_by_code(code) && tries < max_tries
+          tries += 1
           code = @@code_generator.generate
         end
+
+        if tries == max_tries
+          code = nil
+          raise "Unique code could not be generated, please try again."
+        end
+
         code
       end
 
