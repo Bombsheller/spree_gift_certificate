@@ -1,11 +1,5 @@
 require 'spec_helper'
 
-# Please note what is NOT TESTED HERE: the actual Stripe modal popup and payment
-# errors. The reason being I don't want to put my personal test API keys into the
-# application. I've written tests for and clicked through the process using a
-# Spree test app and have ensured it works, for me at least ;-). When integrating,
-# make sure you test with your test API keys and walk through the code paths
-# involving payment errors in your application's repo.
 describe 'Purchasing a gift certificate', js: true do
   let(:user) { create(:user) }
 
