@@ -106,7 +106,7 @@ module Spree
       def refund_purchase
         return errors.add(:payment, 'Hasn\'t been purhcased yet.') unless payment_code
         begin
-          stripe_gateway.refund(amount, payment_code)
+          stripe_gateway.refund(amount * 100, payment_code)
         rescue Exception
           errors.add(:payment, 'Something went wrong refunding. Please use try again or contact sysadmin and use the Stripe dashboard to refund.')
         end
