@@ -120,10 +120,10 @@ describe 'Purchasing a gift certificate', js: true do
     end
 
     it 'should auto-fill form' do
-      default_value = Spree::Config.preferred(:gift_certificate_value_2).to_s
+      default_value = Spree::Config.preferred_gift_certificate_value_2.to_s
       expect(find('input#gift_certificate_amount', visible: false).value).to eq(default_value)
 
-      other_value = Spree::Config.preferred(:gift_certificate_value_3).to_s
+      other_value = Spree::Config.preferred_gift_certificate_value_3.to_s
       select(other_value, from: 'gift_certificate_amount')
       expect(find('input#gift_certificate_amount', visible: false).value).to eq(other_value)
     end
