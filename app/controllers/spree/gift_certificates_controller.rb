@@ -59,9 +59,9 @@ module Spree
 
       def gather_preferred_values
         preferred_gift_certificate_values = []
-        value_1 = Spree::Config.preferred(:gift_certificate_value_1) if Spree::Config.has_preference?(:gift_certificate_value_1)
-        value_2 = Spree::Config.preferred(:gift_certificate_value_2) if Spree::Config.has_preference?(:gift_certificate_value_2)
-        value_3 = Spree::Config.preferred(:gift_certificate_value_3) if Spree::Config.has_preference?(:gift_certificate_value_3)
+        value_1 = Spree::Config.preferred_gift_certificate_value_1 if Spree::Config.has_preference?(:gift_certificate_value_1)
+        value_2 = Spree::Config.preferred_gift_certificate_value_2 if Spree::Config.has_preference?(:gift_certificate_value_2)
+        value_3 = Spree::Config.preferred_gift_certificate_value_3 if Spree::Config.has_preference?(:gift_certificate_value_3)
         preferred_gift_certificate_values << value_1 if value_1
         preferred_gift_certificate_values << value_2 if value_2
         preferred_gift_certificate_values << value_3 if value_3

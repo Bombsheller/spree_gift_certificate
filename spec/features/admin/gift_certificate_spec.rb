@@ -25,7 +25,7 @@ describe 'Admin gift certificate management', js: true do
     end
 
     it 'should have gift certificate navigation link' do
-      expect(find('#sub_nav')).to have_content('Gift Certificates')
+      expect(find('#sub_nav')).to have_content('Gift Certificates'.upcase)
     end
 
     it 'should list all gift certificates' do

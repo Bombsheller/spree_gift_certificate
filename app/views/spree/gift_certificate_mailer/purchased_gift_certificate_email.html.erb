@@ -4,7 +4,7 @@
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
   </head>
   <body>
-    <h1>Your Gift Certificate to <%= Spree::Config.site_name %>!</h1>
+    <h1>Your Gift Certificate to <%= Spree::Store.name %>!</h1>
     <p>
       You're going to make somebody very happy with this gift certificate!
       Relevant information is below. We recommend delivering it either by hand
@@ -37,6 +37,6 @@
     <p>Thanks for purchasing the gift certificate, the recipient will not be disappointed!</p>
     <br>
     Best,<br>
-    <%= "The #{Spree::Config.site_name} team" %>
+    <%= "The #{Spree::Store.name} team" %>
   </body>
 </html>

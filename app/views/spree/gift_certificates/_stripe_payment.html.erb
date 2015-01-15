@@ -51,7 +51,7 @@
         var amount = giftCertificate.amount;
 
         handler.open({
-          name: "<%= Spree::Config.site_name %>",
+          name: "<%= Spree::Store.name %>",
           email: $('#gift_certificate_sender_email').val(),
           description: 'Gift Certificate purchase',
           amount: Number(amount) * 100 // cents
