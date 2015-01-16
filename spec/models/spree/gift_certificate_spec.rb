@@ -10,7 +10,7 @@ describe Spree::GiftCertificate do
   context 'redeeming gift certificate' do
     it 'should award store credit when redeemed' do
       purchased_certificate.redeem_for(recipient)
-      expect(recipient.store_credits_total).to eq(purchased_certificate.amount)
+      expect(recipient.store_credits.collect(&:amount).sum).to eq(purchased_certificate.amount)
       expect(purchased_certificate.state).to eq('redeemed')
       expect(purchased_certificate.recipient).to eq(recipient)
     end

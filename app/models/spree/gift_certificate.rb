@@ -96,11 +96,16 @@ module Spree
       end
 
       def award_store_credit
-        Spree::StoreCredit.create!(
-          user_id: recipient_user_id,
+        user = Spree::User.find(recipient_user_id)
+        store_credits = user.store_credits.build!({
           amount: amount,
-          remaining_amount: amount,
-          reason: "Spree::GiftCertificate, code: #{code}")
+          currency: Spree::Config[:currency],
+          memo: "Spree::GiftCertificate, code: #{code}",
+          created_by: user,
+          action_originator: user
+        })
+
+        store_credits.save!
       end
 
       def refund_purchase

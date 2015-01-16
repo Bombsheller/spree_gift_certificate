@@ -53,7 +53,7 @@ describe 'Redeeming a gift certificate', js: true do
       fill_in 'order_coupon_code', with: purchased_certificate.code
       click_on 'update-button'
       expect(page).to have_content('Gift card has expired.')
-      expect(user.store_credits_total).to eq(0)
+      expect(user.store_credits.collect(&:amount).sum).to eq(0)
     end
 
     it 'should allow redemption on payment screen and then use store credits to pay' do
