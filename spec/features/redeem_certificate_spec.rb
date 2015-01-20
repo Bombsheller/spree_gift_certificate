@@ -44,7 +44,7 @@ describe 'Redeeming a gift certificate', js: true do
       fill_in 'order_coupon_code', with: purchased_certificate.code
       click_on 'update-button'
       expect(page).to have_content('Successfully redeemed gift certificate')
-      expect(user.store_credits_total).to eq(purchased_certificate.amount)
+      expect(user.total_available_store_credit).to eq(purchased_certificate.amount)
     end
 
     it 'should not allow redemption of expired certificate' do
@@ -64,7 +64,7 @@ describe 'Redeeming a gift certificate', js: true do
       fill_in 'order_coupon_code', with: purchased_certificate.code
       click_on 'Save and Continue'
       expect(page).to have_content('Successfully redeemed gift certificate')
-      expect(user.store_credits_total).to eq(purchased_certificate.amount)
+      expect(user.total_available_store_credit).to eq(purchased_certificate.amount)
     end
 
   end

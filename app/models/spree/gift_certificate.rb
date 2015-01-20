@@ -45,7 +45,7 @@ module Spree
           begin
             self.save!
             self.redeem!
-            status[:notice] = "Successfully redeemed gift certificate for #{Spree::Money.new(amount)}! You now have #{user.store_credits_total} in store credit."
+            status[:notice] = "Successfully redeemed gift certificate for #{Spree::Money.new(amount)}! You now have #{user.total_available_store_credit} in store credit."
           rescue StateMachine::InvalidTransition
             status[:error] = "Could not redeem gift certificate because #{nice_failure_reason}."
           rescue Exception
@@ -97,15 +97,17 @@ module Spree
 
       def award_store_credit
         user = Spree::User.find(recipient_user_id)
-        store_credits = user.store_credits.build!({
+        store_credit = user.store_credits.build({
           amount: amount,
           currency: Spree::Config[:currency],
           memo: "Spree::GiftCertificate, code: #{code}",
           created_by: user,
-          action_originator: user
+          action_originator: user,
+          category: Spree::StoreCreditCategory.find_or_create_by(name: 'Gift Card'),
+          type_id: Spree::StoreCreditType.find_or_create_by(name: 'Gift Card').id
         })
 
-        store_credits.save!
+        store_credit.save!
       end
 
       def refund_purchase
