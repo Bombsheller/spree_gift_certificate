@@ -17,9 +17,9 @@ module Spree
       before_transition to: :purchased do |certificate, transition|
         certificate.send(:make_charge, transition.args.first)
         certificate.send(:set_expiry)
+        certificate.send_purchase_email(transition.args.second)
         fail 'Gift certificate cannot be purchased.' unless certificate.errors.empty?
       end
-      before_transition to: :purchased, do: :send_purchase_email
 
       event :redeem do
         transition from: :purchased, to: :redeemed
@@ -64,8 +64,8 @@ module Spree
       @stripe_publishable_key ||= stripe_payment_method.preferred_publishable_key if stripe_payment_method
     end
 
-    def send_purchase_email
-      GiftCertificateMailer.purchased_gift_certificate_email(self).deliver
+    def send_purchase_email(current_store)
+      GiftCertificateMailer.purchased_gift_certificate_email(self, current_store.url).deliver
     end
 
     private

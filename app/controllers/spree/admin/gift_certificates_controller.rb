@@ -9,7 +9,7 @@ module Spree
       end
 
       def resend
-        @gift_certificate.send_purchase_email
+        @gift_certificate.send_purchase_email(current_store)
         if @gift_certificate.errors.empty?
           flash[:success] = 'Gift certificate email resent.'
         else

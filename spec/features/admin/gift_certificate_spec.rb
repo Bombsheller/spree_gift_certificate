@@ -6,10 +6,12 @@ describe 'Admin gift certificate management', js: true do
   let!(:purchased_certificate) { create(:purchased_certificate) }
   let!(:redeemed_certificate) { create(:redeemed_certificate) }
   let!(:refunded_certificate) { create(:refunded_certificate) }
+  let!(:store) { create(:store) }
 
   before do
     Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(user)
     visit '/admin/gift_certificates'
+    allow_any_instance_of(ApplicationController).to receive(:current_store).and_return(store)
   end
 
   context 'browsing admin panel' do

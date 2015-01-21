@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe 'Purchasing a gift certificate', js: true do
   let(:user) { create(:user) }
+  let!(:store) { create(:store) }
 
   before do
     Spree::GiftCertificate.any_instance.stub(stripe_publishable_key: 'bogus',
@@ -13,6 +14,7 @@ describe 'Purchasing a gift certificate', js: true do
     # So emails will be stored in the deliveries array
     ActionMailer::Base.delivery_method = :test
     ActionMailer::Base.deliveries = []
+    allow_any_instance_of(ApplicationController).to receive(:current_store).and_return(store)
   end
 
   context 'as a guest' do

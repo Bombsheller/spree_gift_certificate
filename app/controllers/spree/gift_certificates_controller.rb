@@ -28,7 +28,7 @@ module Spree
 
     def update
       @gift_certificate = GiftCertificate.find(params[:id])
-      @gift_certificate.purchase(params[:stripeToken])
+      @gift_certificate.purchase(params[:stripeToken], current_store)
 
       respond_to do |format|
         # Successfully purchased

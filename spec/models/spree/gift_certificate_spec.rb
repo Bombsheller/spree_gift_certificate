@@ -6,6 +6,7 @@ describe Spree::GiftCertificate do
   let(:redeemed_certificate) { create(:redeemed_certificate) }
   let(:purchased_certificate) { create(:purchased_certificate) }
   let(:refunded_certificate) { create(:refunded_certificate) }
+  let!(:store) { create(:store) }
 
   context 'redeeming gift certificate' do
     it 'should award store credit when redeemed' do
@@ -61,7 +62,7 @@ describe Spree::GiftCertificate do
     ActiveMerchant::Billing::StripeGateway.any_instance.stub(purchase: payment_response)
     Spree::GiftCertificate.any_instance.stub(stripe_secret_key: 'a key! a key!')
     card_id = 'this_is_a_card'
-    certificate.purchase!(card_id)
+    certificate.purchase!(card_id, store)
     certificate.reload
     expect(certificate.state).to eq('purchased')
     expect(certificate.payment_code).to eq(payment_response.params['id'])
